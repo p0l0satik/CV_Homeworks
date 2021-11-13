@@ -43,10 +43,16 @@ def plot_img(img, cmap='gray'):
     plt.axis('off')
     plt.show()
 
+def crop(img):
+    x, y = 3338, 1709
+    h, w = 60, 60
+    return img[y-h:y, x-w:x]
+
 def get_city_centers(img):
     img_gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     img_gray = cv2.bitwise_not(img_gray)
-    template = cv2.imread("teplate_c.jpg") 
+    template = cv2.imread("/autograder/source/train/all.jpg") 
+    template = crop(template)
 
     temp_gray = cv2.cvtColor(template, cv2.COLOR_RGB2GRAY)
     temp_gray = cv2.bitwise_not(temp_gray)
@@ -62,4 +68,3 @@ def predict_image(img: np.ndarray) -> (Union[np.ndarray, list], dict, dict):
     n_trains = {'blue': 20, 'green': 30, 'black': 0, 'yellow': 30, 'red': 0}
     scores = {'blue': 60, 'green': 90, 'black': 0, 'yellow': 45, 'red': 0}
     return city_centers, n_trains, scores
-
