@@ -21,16 +21,10 @@ COLORS = ('blue', 'green', 'black', 'yellow', 'red')
 TRAINS2SCORE = {1: 1, 2: 2, 3: 4, 4: 7, 6: 15, 8: 21}
 
 
-def predict_image(img: np.ndarray) -> (Union[np.ndarray, list], dict, dict):
-    # raise NotImplementedError
-    city_centers = city_centers(img)
-    n_trains = {'blue': 20, 'green': 30, 'black': 0, 'yellow': 30, 'red': 0}
-    scores = {'blue': 60, 'green': 90, 'black': 0, 'yellow': 45, 'red': 0}
-    return city_centers, n_trains, scores
+
 
 def get_local_centers(corr, th):
     lbl, n = label(corr >= th, connectivity=2, return_num=True)
-    print(lbl)
     return np.int16([np.round(np.mean(np.argwhere(lbl == i), axis=0)) for i in range(1, n + 1)])
 
 
@@ -49,7 +43,7 @@ def plot_img(img, cmap='gray'):
     plt.axis('off')
     plt.show()
 
-def city_centers(img):
+def get_city_centers(img):
     img_gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     img_gray = cv2.bitwise_not(img_gray)
     template = cv2.imread("teplate_c.jpg") 
@@ -61,4 +55,11 @@ def city_centers(img):
     corr_skimage = match_template(img_gray, temp_gray, pad_input=True)
 
     return  np.int64(get_local_centers(corr_skimage, 0.5))
+
+def predict_image(img: np.ndarray) -> (Union[np.ndarray, list], dict, dict):
+    # raise NotImplementedError
+    city_centers = get_city_centers(img)
+    n_trains = {'blue': 20, 'green': 30, 'black': 0, 'yellow': 30, 'red': 0}
+    scores = {'blue': 60, 'green': 90, 'black': 0, 'yellow': 45, 'red': 0}
+    return city_centers, n_trains, scores
 
